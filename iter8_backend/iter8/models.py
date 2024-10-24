@@ -4,6 +4,9 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     name = models.CharField(max_length=100,blank=True)
     user_score = models.IntegerField(default=0)
+
+    def  __str__(self):
+        return str(self.id) + self.name
     
 class Assignment(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -15,7 +18,7 @@ class Assignment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return str(self.id) + '-' + self.name
     
 class Assignment_attachment(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
@@ -43,7 +46,7 @@ class Reviewee_subtask(models.Model):
     isCompleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.subtask.name + ' - ' + self.reviewee.username
+        return str(self.id) + '-' + self.subtask.name + ' - ' + self.reviewee.username
     
 class Iteration(models.Model):
     reviewee_subtask = models.ForeignKey(Reviewee_subtask, on_delete=models.CASCADE)
@@ -56,10 +59,13 @@ class Iteration(models.Model):
 
 class Iteration_attachment(models.Model):
     iteration = models.ForeignKey(Iteration, on_delete=models.CASCADE)
-    attachment = models.FileField(upload_to='iteration_attachments/')
+    def iteration_directory_path(instance, filename):
+        return 'iteration_attachment/iteration_{0}/{1}'.format(instance.iteration.id, filename)
+
+    attachment = models.FileField(upload_to=iteration_directory_path)
 
     def __str__(self):
-        return self.iteration.subtask.subtask.name + ' - ' + self.iteration.subtask.reviewee.username + ' - ' + self.attachment.name
+        return self.iteration.reviewee_subtask.subtask.name + ' - ' + self.iteration.reviewee_subtask.reviewee.username + ' - ' + self.attachment.name
     
 class Comment(models.Model):
     iteration = models.ForeignKey(Iteration, on_delete=models.CASCADE)

@@ -181,14 +181,16 @@ class IterationView(View):
             return JsonResponse(serializer.errors, status=400)
 
 
-# i need reviewee_subtask_id of reviewee_subtask.reviewee = request.get('reviewee') and reviewee_subtask.subtask.assignment = request.get('assignment')
+# i need reviewee_subtask_ids of reviewee_subtask.reviewee = request.get('reviewee') and reviewee_subtask.subtask.assignment = request.get('assignment')
 class FetchReviewee_subtaskList(View):
     def get(self, request):
-        reviewee = request.get('reviewee')
-        assignment = request.get('assignment')
+        reviewee = request.GET.get('reviewee')
+        assignment = request.GET.get('assignment')
         reviewee_subtasks = list(Reviewee_subtask.objects.filter(reviewee=reviewee, subtask__assignment=assignment).values())
         return JsonResponse(reviewee_subtasks, safe=False)
     
+# get gives list of attachments of an iteration
+# post uploads an attachment for an iteration
 @method_decorator(csrf_exempt, name='dispatch')
 class Iteration_attachmentView(View):
     def get(self, request):
@@ -208,9 +210,9 @@ class Iteration_attachmentView(View):
         attachment_instance.save()
         return JsonResponse({'message': 'Attachment uploaded successfully'}, status=201)
 
-
+# fetch reviewees of an assignment
 class FetchRevieweeList(View):
     def get(self, request):
-        assignment_id = request.get('assignment_id')
+        assignment_id = request.GET.get('assignment_id')
         reviewee_list = list(Assignment.objects.get(id=assignment_id).reviewee.all().values('name', 'id'))
         return JsonResponse(reviewee_list, safe=False)
