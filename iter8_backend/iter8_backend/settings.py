@@ -127,3 +127,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Custom User model
 AUTH_USER_MODEL = 'iter8.User'
+
+client_id = 'cnQzBJfVAH5LZcGiA7hgPNBY2rAVqOra8XqEMkze'
+client_secret = 'NBk5csH0MKeffhnogPybuO5QEQXVMyKlD1XBsvekYN2ygentXQjOdAHdsN7kTMLj6MmTDuzh28VQkjbobZFND93MMdjOvnVER1xHzfQeNjuCt29266NHk7ukLa0o6U6y'

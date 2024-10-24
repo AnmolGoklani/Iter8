@@ -1,4 +1,4 @@
-from .models import User, Assignment, Assignment_attachment, Subtask, Reviewee_subtask, Iteration, Iteration_attachment, comment, group
+from .models import User, Assignment, Assignment_attachment, Subtask, Reviewee_subtask, Iteration, Iteration_attachment, Comment, Group
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
@@ -36,13 +36,13 @@ class Iteration_attachmentSerializer(serializers.ModelSerializer):
         model = Iteration_attachment
         fields = '__all__'
 
-class commentSerializer(serializers.ModelSerializer):
+class CommentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = comment
+        model = Comment
         fields = '__all__'
 
-class groupSerializer(serializers.ModelSerializer):
+class GroupSerializer(serializers.ModelSerializer):
     class Meta:
-        model = group
+        model = Group
         fields = '__all__'
 

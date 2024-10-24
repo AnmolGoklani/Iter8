@@ -2,12 +2,13 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
+    name = models.CharField(max_length=100,blank=True)
     user_score = models.IntegerField(default=0)
     
 class Assignment(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
-    reviewer = models.ManyToManyField(User, related_name='reviewer_assignments')
-    reviewee = models.ManyToManyField(User, related_name='reviewee_assignments')
+    reviewer = models.ManyToManyField(User, related_name='reviewer_assignments', blank = True, null = True)
+    reviewee = models.ManyToManyField(User, related_name='reviewee_assignments', blank = True, null = True)
     name = models.CharField(max_length=100)
     description = models.TextField()
     due_date = models.DateTimeField()
@@ -18,7 +19,10 @@ class Assignment(models.Model):
     
 class Assignment_attachment(models.Model):
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
-    attachment = models.FileField(upload_to='assignment_attachments/')
+    def assignment_directory_path(instance, filename):
+        return 'assignment_attachment/assignment_{0}/{1}'.format(instance.assignment.id, filename)
+
+    attachment = models.FileField(upload_to=assignment_directory_path)
 
     def __str__(self):
         return self.assignment.name + ' - ' + self.attachment.name
@@ -31,7 +35,7 @@ class Subtask(models.Model):
     maxscore = models.IntegerField(default=10)
 
     def __str__(self):
-        return self.name
+        return str(self.id) + '-' + self.name
     
 class Reviewee_subtask(models.Model):
     subtask = models.ForeignKey(Subtask, on_delete=models.CASCADE)
@@ -42,13 +46,13 @@ class Reviewee_subtask(models.Model):
         return self.subtask.name + ' - ' + self.reviewee.username
     
 class Iteration(models.Model):
-    subtask = models.ForeignKey(Reviewee_subtask, on_delete=models.CASCADE)
+    reviewee_subtask = models.ForeignKey(Reviewee_subtask, on_delete=models.CASCADE)
     date_submitted = models.DateTimeField(auto_now_add=True)
-    remarks = models.TextField()
+    remark = models.TextField()
     isReviewed = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.subtask.subtask.name + ' - ' + self.subtask.reviewee.username
+        return str(self.id) + '-' + self.reviewee_subtask.subtask.name
 
 class Iteration_attachment(models.Model):
     iteration = models.ForeignKey(Iteration, on_delete=models.CASCADE)
@@ -57,7 +61,7 @@ class Iteration_attachment(models.Model):
     def __str__(self):
         return self.iteration.subtask.subtask.name + ' - ' + self.iteration.subtask.reviewee.username + ' - ' + self.attachment.name
     
-class comment(models.Model):
+class Comment(models.Model):
     iteration = models.ForeignKey(Iteration, on_delete=models.CASCADE)
     reviewer = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField()
@@ -65,7 +69,7 @@ class comment(models.Model):
     def __str__(self):
         return self.iteration.subtask.subtask.name + ' - ' + self.iteration.subtask.reviewee.username + ' - ' + self.reviewer.username
 
-class group(models.Model):
+class Group(models.Model):
     name = models.CharField(max_length=100)
     members = models.ManyToManyField(User, related_name='group_members')
 
