@@ -79,6 +79,7 @@ class SignUp(View):
         username = request.POST.get("username")
         password = request.POST.get("password")
         email = request.POST.get("email")
+        # print(name, username, password, email)
         user = User.objects.filter(username=username).first()
         if user is not None:
             return JsonResponse({"message": "user already exists"}, status=400)

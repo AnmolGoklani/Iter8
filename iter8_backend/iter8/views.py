@@ -3,7 +3,7 @@ from django.views import View
 from django.http import JsonResponse, Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from .models import Assignment, User, Assignment_attachment, Subtask, Comment, Reviewee_subtask, Iteration, Iteration_attachment
+from .models import Assignment, User, Assignment_attachment, Subtask, Comment, Reviewee_subtask, Iteration, Iteration_attachment, Group
 from .serializers import AssignmentSerializer, SubtaskSerializer, CommentSerializer, IterationSerializer
 import json
 
@@ -11,7 +11,7 @@ import json
 class FetchAssignmentListReviewee(View):
     def get(self, request):
         reviewee = request.user
-        assignments = list(Assignment.objects.filter(reviewee=reviewee).values('name', 'created_at' , 'due_date'))
+        assignments = list(Assignment.objects.filter(reviewee=reviewee).values('id','name', 'created_at' , 'due_date'))
         return JsonResponse(assignments, safe=False)
     
 class FetchAssignmentListReviewer(View):
@@ -19,13 +19,17 @@ class FetchAssignmentListReviewer(View):
         reviewer = request.user
         assignments = list(Assignment.objects.filter(reviewer=reviewer).values('name', 'created_at' , 'due_date'))
         return JsonResponse(assignments, safe=False)
+    
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class AssignmentInfo(View):
     def get(self, request):
         assignment_id = request.GET.get('assignment_id')
-        assignment = Assignment.objects.filter(id=assignment_id).values()
-        return JsonResponse(list(assignment), safe=False)
+        assignment = list(Assignment.objects.filter(id=assignment_id).values())
+        reviewers = list(Assignment.objects.get(id=assignment_id).reviewer.all().values('name', 'id'))
+        assignment[0]['reviewers'] = reviewers
+        return JsonResponse(assignment, safe=False)
     
     # this only accepts form data
 
@@ -85,7 +89,7 @@ class Assignment_attachmentView(View):
         attachments = Assignment_attachment.objects.filter(assignment=assignment)
         attachment_urls = [request.build_absolute_uri(attachment.attachment.url) for attachment in attachments]
 
-        return JsonResponse({'attachments': attachment_urls}, safe=False)
+        return JsonResponse(attachment_urls, safe=False)
     
     def post(self, request):
         assignment_id = request.POST.get('assignment_id')
@@ -105,7 +109,7 @@ class Assignment_attachmentView(View):
 class SubtaskList(View):
     def get(self, request):
         assignment_id = request.GET.get('assignment_id')
-        subtasks = list(Subtask.objects.filter(assignment=assignment_id).values('name', 'id'))
+        subtasks = list(Subtask.objects.filter(assignment=assignment_id).values('name', 'id', 'due_date'))
         return JsonResponse(subtasks, safe=False)
     
 @method_decorator(csrf_exempt, name='dispatch')
@@ -137,6 +141,13 @@ def CreateRevieweeSubtask(request, subtask):
     for reviewee in reviewee_list:
         reviewee_subtask = Reviewee_subtask(subtask=subtask, reviewee=reviewee)
         reviewee_subtask.save()
+
+class fetchRevieweeSubtask(View):
+    def get(self, request):
+        reviewee = request.user
+        subtask = request.GET.get('subtask_id')
+        reviewee_subtask = list(Reviewee_subtask.objects.filter(reviewee=reviewee, subtask=subtask).values())
+        return JsonResponse(reviewee_subtask, safe=False)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CommentView(View):
@@ -188,6 +199,15 @@ class FetchReviewee_subtaskList(View):
         assignment = request.GET.get('assignment')
         reviewee_subtasks = list(Reviewee_subtask.objects.filter(reviewee=reviewee, subtask__assignment=assignment).values())
         return JsonResponse(reviewee_subtasks, safe=False)
+
+
+# when a reviewee opens the assignment page call this along with the fetch subtask list so that we can know which subtasks are completed  
+class FetchUser_subtaskList(View):
+    def get(self, request):
+        reviewee = request.user
+        assignment = request.GET.get('assignment_id')
+        reviewee_subtasks = list(Reviewee_subtask.objects.filter(reviewee=reviewee, subtask__assignment=assignment).values())
+        return JsonResponse(reviewee_subtasks, safe=False)
     
 # get gives list of attachments of an iteration
 # post uploads an attachment for an iteration
@@ -216,3 +236,15 @@ class FetchRevieweeList(View):
         assignment_id = request.GET.get('assignment_id')
         reviewee_list = list(Assignment.objects.get(id=assignment_id).reviewee.all().values('name', 'id'))
         return JsonResponse(reviewee_list, safe=False)
+    
+
+class FetchGroupList(View):
+    def get(self, request):
+        groups = list(Group.objects.all().values('name', 'id'))
+        return JsonResponse(groups, safe=False)
+    
+class FetchGroupMembers(View):
+    def get(self, request):
+        group_id = request.GET.get('group_id')
+        members = list(Group.objects.get(id=group_id).members.all().values('name', 'id'))
+        return JsonResponse(members, safe=False)

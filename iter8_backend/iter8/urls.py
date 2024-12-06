@@ -19,6 +19,10 @@ urlpatterns = [
     path("iteration/", views.IterationView.as_view(), name="Iteration"),
     path("iteration/attachments/", views.Iteration_attachmentView.as_view(), name="IterationAttachment"),
     path("fetch/reviewee_subtask/", views.FetchReviewee_subtaskList.as_view(), name="FetchRevieweeSubtask"),
+    path("fetch/user_subtask/", views.FetchUser_subtaskList.as_view(), name="FetchUserSubtask"),
     path("fetch/reviewee/" , views.FetchRevieweeList.as_view(), name="FetchRevieweeList"),
+    path("groups/", views.FetchGroupList.as_view(), name="FetchGroupList"),
+    path("group/members/", views.FetchGroupMembers.as_view(), name="FetchGroupMembers"),
+    path("reviewee_subtask/", views.fetchRevieweeSubtask.as_view(), name="FetchRevieweeSubtask"),
 
 ]

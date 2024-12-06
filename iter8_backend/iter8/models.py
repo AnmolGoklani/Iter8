@@ -73,7 +73,7 @@ class Comment(models.Model):
     comment = models.TextField()
 
     def __str__(self):
-        return self.iteration.subtask.subtask.name + ' - ' + self.iteration.subtask.reviewee.username + ' - ' + self.reviewer.username
+        return self.iteration.reviewee_subtask.subtask.name + ' - ' + self.iteration.reviewee_subtask.reviewee.username + ' - ' + self.reviewer.username
 
 class Group(models.Model):
     name = models.CharField(max_length=100)
