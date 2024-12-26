@@ -26,10 +26,9 @@ const GroupList = () => {
     getGroups();
   }, []);
 
-  
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" gutterBottom color="text.primary">
         Groups
       </Typography>
       
@@ -38,7 +37,6 @@ const GroupList = () => {
           <Card 
             key={Group.id} 
             elevation={2}
-            
             sx={{ 
               '&:hover': { 
                 transform: 'translateY(-2px)',
@@ -49,12 +47,11 @@ const GroupList = () => {
               backgroundColor: 'background.paper',
               border: '1px solid',
               borderColor: 'text.secondary'
-      
             }}
             onClick={() => navigate('/group/' + Group.id)}
           >
             <CardContent>
-              <Typography variant="h6" component="div" gutterBottom>
+              <Typography variant="h6" component="div" gutterBottom color="text.primary">
                 {Group.name}
               </Typography>
             </CardContent>

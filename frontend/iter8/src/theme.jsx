@@ -1,29 +1,32 @@
 import {createTheme} from '@mui/material'
 
 const AppTheme = createTheme({
-
     palette: {
         primary:{
-            main: '#4876EE',
+            main: '#6272a4',
         },
         secondary:{
-            main: '#1AAFFF',
+            main: '#ff79c6',
         },
         background: {
-            default: '#f0f0f0',
+            default: '#282a36',
+            paper: '#44475a',
         },
         error:{
-            main: '#FF0000',
+            main: '#ff5555',
         },
         info:{
-            main: '#FFA500',
+            main: '#8be9fd',
         },
         text:{
-            primary: '#000000',
-            secondary: '#808080',
+            primary: '#f8f8f2',
+            secondary: '#6272a4',
         },
         success:{
-            main: '#008000',
+            main: '#50fa7b',
+        },
+        warning: {
+            main: '#f1fa8c',
         },
     },
     typography: {
@@ -50,9 +53,6 @@ const AppTheme = createTheme({
           textTransform: 'none',
         },
     },
-    
-    
-
 });
 
 export default AppTheme;

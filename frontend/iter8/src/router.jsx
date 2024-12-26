@@ -8,6 +8,9 @@ import Dashboard from './components/Dashboard';
 import GroupList from './components/GroupList';
 import GroupPage from './components/GroupPage';
 import SubtaskPage from './components/SubtaskPage';
+import SubmitPage from './components/SubmitPage';
+import ReviewPage from './components/ReviewPage';
+import RevieweeAssignmentPage from './components/RevieweeAssignmentPage';
 
 const router = createBrowserRouter([
     
@@ -32,6 +35,10 @@ const router = createBrowserRouter([
         element: <AssignmentPage />
     },
     {
+        path: 'review/:assignmentId',
+        element: <ReviewPage />
+    },
+    {
         path: '/dashboard',
         element: <Dashboard />
     },
@@ -46,9 +53,18 @@ const router = createBrowserRouter([
     {
         path: '/subtask/:subtaskId',
         element: <SubtaskPage />
+    },
+    {
+        path: '/submitIteration/:revieweeSubtaskId',
+        element: <SubmitPage />
+    },
+    {
+        path: '/revieweeAssignment/:revieweeId',
+    },
+    {
+        path: '/revieweeAssignment/:revieweeId/:assignmentId',
+        element: <RevieweeAssignmentPage />
     }
-
-
 
 ]);
 

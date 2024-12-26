@@ -34,7 +34,7 @@ const AssignmentList = () => {
       day: 'numeric', 
       hour: '2-digit', 
       minute: '2-digit', 
-      second: '2-digit' 
+         
     };
     return new Date(dateString).toLocaleString(undefined, options);
   };
@@ -60,7 +60,7 @@ const AssignmentList = () => {
               transition: 'transform 0.2s ease, box-shadow 0.2s ease',
               backgroundColor: 'background.paper',
               border: '1px solid',
-              borderColor: 'text.secondary'
+              borderColor: 'primary.main'
       
             }}
             onClick={() => navigate('/assignment/' + assignment.id)}
@@ -71,7 +71,7 @@ const AssignmentList = () => {
               </Typography>
               
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="info.main">
                   Created: {formatDate(assignment.created_at)}
                 </Typography>
                 <Typography variant="body2" color="error.main">

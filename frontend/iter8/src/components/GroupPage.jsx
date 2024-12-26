@@ -24,31 +24,28 @@ const GroupPage = () => {
         loadGroupMembers();
     }, [groupId]);
 
-
-    if (loading) return <CircularProgress />;
+    if (loading) return <CircularProgress color="primary" />;
     if (error) return <Alert severity="error">Error loading group details: {error.message}</Alert>;
 
     return (
         <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
-            <Typography variant="h4" gutterBottom>
+            <Typography variant="h4" gutterBottom color="text.primary">
                 Group Members
             </Typography>
-            <Card>
+            <Card sx={{ backgroundColor: 'background.paper', border: '1px solid', borderColor: 'text.secondary' }}>
                 <CardContent>
                     <List>
                         {groupmembers.map((groupmember) => (
                             <ListItem key={groupmember.id}>
                                 <ListItemText
                                     primary={groupmember.name}
+                                    primaryTypographyProps={{ color: 'text.primary' }}
                                 />
                             </ListItem>
                         ))}
                     </List>
                 </CardContent>
-
             </Card>
-            
- 
         </Container>
     );
 };

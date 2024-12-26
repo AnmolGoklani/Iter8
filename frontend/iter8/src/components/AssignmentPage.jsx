@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchAssignment, fetchAssignmentAttachments, fetchAssignmentSubtaskList, fetchRevieweeSubtaskList } from '../apiservice';
+import { fetchAssignment, fetchAssignmentAttachments, fetchAssignmentSubtaskList,} from '../apiservice';
 import { Container, Typography, Card, CardContent, List, ListItem, ListItemText, CircularProgress, Alert, Button } from '@mui/material';
 
 const AssignmentPage = () => {
@@ -41,7 +41,7 @@ const AssignmentPage = () => {
           day: 'numeric', 
           hour: '2-digit', 
           minute: '2-digit', 
-          second: '2-digit' 
+             
         };
         return new Date(dateString).toLocaleString(undefined, options);
     };
@@ -62,14 +62,11 @@ const AssignmentPage = () => {
     return (
         <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
             <Typography variant="h4" gutterBottom>
-                Assignment Details
+                {assignment[0].name}
             </Typography>
             {assignment && (
                 <Card sx={{ mb: 4, border: '2px solid', borderColor: 'primary.main' }}>
                     <CardContent>
-                        <Typography variant="h5" component="div" gutterBottom>
-                            {assignment[0].name}
-                        </Typography>
                         <Typography variant="body1" gutterBottom>
                             <strong>Description:</strong> {assignment[0].description}
                         </Typography>
@@ -148,7 +145,7 @@ const AssignmentPage = () => {
                                         <Typography variant="h6" component="div">
                                             {subtask.name}
                                         </Typography>
-                                        <Typography variant="body2" color="textSecondary">
+                                        <Typography variant="body2" color="error.main">
                                             Due Date: {formatDate(subtask.due_date)}
                                         </Typography>
                                     </CardContent>

@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from .models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
 from django.utils.decorators import method_decorator
 
 redirect_uri = "http://localhost:8000/iter8/oauth/channeli/callback/"
@@ -17,6 +18,7 @@ logout_url = "https://channeli.in/open_auth/revoke_token/"
 class Authorize(View):
     def get(self, request):
         return redirect(f"{authorisation_url}?client_id={client_id}&redirect_uri={redirect_uri}&state=random_string")
+        
     
 
 class GetToken(View):
@@ -38,13 +40,38 @@ class GetToken(View):
             return JsonResponse({"error": "response not found"}, status=400)
 
         token_data = response.json()
-        access_token = token_data["access_token"]
-        refresh_token = token_data["refresh_token"]
+        # print(token_data)
+        access_token = token_data.get('access_token')
+        refresh_token = token_data.get('refresh_token')
+		
+        user_info = requests.get(get_user_data_url, headers = {'Authorization': f'Bearer {access_token}'})
+        user_data = user_info.json()
+        print(user_data)
 
-        user_data = requests.get(get_user_data_url, headers={"Authorization": f"Bearer {access_token}"})
-        user_data = user_data.json()
+        PersonalEmail = user_data["contactInformation"]["emailAddress"]
+        InstituteEmail = user_data["contactInformation"]["instituteWebmailAddress"]
+		
+        mails = {
+			'PersonalEmail': PersonalEmail,
+			'InstituteEmail': InstituteEmail
+		}
 
-        return JsonResponse(user_data)
+        user_list = User.objects.filter(email = InstituteEmail)
+        user_list2 = User.objects.filter(email = PersonalEmail)
+
+        if user_list:
+            user = user_list[0]
+            login(request, user)
+            return redirect('http://localhost:5173/dashboard/')
+        
+        elif user_list2:
+            user = user_list2[0]
+            login(request, user)
+            return redirect('http://localhost:5173/dashboard/')
+
+        return redirect("http://localhost:5173/")
+
+        
     
 class OAuthLogout(View):
     def get(self, request):

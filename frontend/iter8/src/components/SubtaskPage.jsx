@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchSubtask , fetchRevieweeSubtask, fetchIterationAttachment, fetchIterationComments, fetchIterationList} from '../apiservice';
+import { fetchSubtask , fetchUserRevieweeSubtask, fetchIterationAttachment, fetchIterationComments, fetchIterationList} from '../apiservice';
 import { Container, Typography, Card, CardContent, List, ListItem, ListItemText, CircularProgress, Alert, Button } from '@mui/material';
 
 const SubtaskPage = () => {
@@ -17,8 +17,8 @@ const SubtaskPage = () => {
             try {
                 const SubtaskData = await fetchSubtask(subtaskId);
                 setSubtask(SubtaskData);
-                const RevieweeSubtaskData = await fetchRevieweeSubtask(subtaskId);
-                console.log(RevieweeSubtaskData);
+                const RevieweeSubtaskData = await fetchUserRevieweeSubtask(subtaskId);
+                // console.log(RevieweeSubtaskData);
                 setRevieweeSubtask(RevieweeSubtaskData);
                 const IterationData = await fetchIterationList(RevieweeSubtaskData[0].id);
                 
@@ -46,14 +46,15 @@ const SubtaskPage = () => {
           day: 'numeric', 
           hour: '2-digit', 
           minute: '2-digit', 
-          second: '2-digit' 
+             
         };
         return new Date(dateString).toLocaleString(undefined, options);
     };
 
     const handleSubmit = () => {
-        // Handle the submit action here
-        console.log('Submit button clicked');
+        // console.log(RevieweeSubtask[0].id);
+        navigate('/submitIteration/' + RevieweeSubtask[0].id);
+        
     };
 
 

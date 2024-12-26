@@ -11,7 +11,7 @@ import {
   Divider,
   Alert
 } from '@mui/material';
-import {Login} from '../apiservice';
+import {Login, handleChanneliClick} from '../apiservice';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -47,21 +47,17 @@ const LoginPage = () => {
     } catch {
         setLoginMessage('Invalid credentials');
     }
-
-
-    
   };
 
   const handleoauthLogin = () => {
-    window.location.href = 'http://127.0.0.1:8000/iter8/oauth/authorise/';
-    
+    handleChanneliClick();
   };
 
   return (
     <Container maxWidth="xs">
       <Box sx={{ mt: 8 }}>
-        <Paper elevation={3} sx={{ p: 4 }}>
-          <Typography variant="h5" align="center" sx={{ mb: 3 }}>
+        <Paper elevation={3} sx={{ p: 4, backgroundColor: 'background.paper', borderColor: 'text.secondary' }}>
+          <Typography variant="h5" align="center" sx={{ mb: 3 }} color="text.primary">
             Login
           </Typography>
 
@@ -81,6 +77,7 @@ const LoginPage = () => {
               variant="outlined"
               required
               sx={{ mb: 2 }}
+              InputLabelProps={{ style: { color: '#f8f8f2' } }}
             />
             
             <TextField
@@ -93,6 +90,7 @@ const LoginPage = () => {
               variant="outlined"
               required
               sx={{ mb: 2 }}
+              InputLabelProps={{ style: { color: '#f8f8f2' } }}
             />
             
             <Button
@@ -101,24 +99,23 @@ const LoginPage = () => {
               variant="contained"
               color="primary"
               sx={{ mb: 2 }}
-              // onClick={handleSubmit}
             >
               Login
             </Button>
           </form>
           
-          <Divider sx={{ my: 2 }}>OR</Divider>
+          <Divider sx={{ my: 2, borderColor: 'text.secondary' }}>OR</Divider>
           
           <Button
             fullWidth
             variant="outlined"
-            // startIcon={<LoginIcon />}
             onClick={handleoauthLogin}
+            sx={{ borderColor: 'secondary.main', color: 'secondary.main' }}
           >
             Login with Channeli
           </Button>
 
-          <Typography align="center" sx={{ mt: 2 }}>
+          <Typography align="center" sx={{ mt: 2 }} color="text.primary">
             Don&apos;t have an account?{' '}
             <Button 
               color="primary"
@@ -128,7 +125,6 @@ const LoginPage = () => {
               Sign up
             </Button>
           </Typography>
-
         </Paper>
       </Box>
     </Container>

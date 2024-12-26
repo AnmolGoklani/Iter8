@@ -12,9 +12,7 @@ import {
 import { Signup } from '../apiservice';
 
 const SignupPage = () => {
-
   const navigate = useNavigate();
-
   const [formData, setFormData] = useState({
     name: '',
     username: '',
@@ -22,11 +20,9 @@ const SignupPage = () => {
     password: '',
     confirmPassword: ''
   });
-
   const [errors, setErrors] = useState({
     passwordMatch: false
   });
-
   const [signupMessage, setSignupMessage] = useState('');
 
   const handleSubmit = async (e) => {
@@ -58,9 +54,6 @@ const SignupPage = () => {
     } catch {
         setSignupMessage('User already exists');
     }
-
-
-    console.log(formData);
   };
 
   const handleChange = (e) => {
@@ -79,8 +72,8 @@ const SignupPage = () => {
 
   return (
     <Container maxWidth="sm">
-      <Paper elevation={3} sx={{ p: 4, mt: 8 }}>
-        <Typography variant="h4" align="center" gutterBottom>
+      <Paper elevation={3} sx={{ p: 4, mt: 8, backgroundColor: 'background.paper', borderColor: 'text.secondary' }}>
+        <Typography variant="h4" align="center" gutterBottom color="text.primary">
           Sign Up
         </Typography>
 
@@ -90,7 +83,6 @@ const SignupPage = () => {
           </Alert>
         )}
 
-        
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
           <TextField
             fullWidth
@@ -100,6 +92,7 @@ const SignupPage = () => {
             onChange={handleChange}
             margin="normal"
             required
+            InputLabelProps={{ style: { color: '#f8f8f2' } }}
           />
           
           <TextField
@@ -110,6 +103,7 @@ const SignupPage = () => {
             onChange={handleChange}
             margin="normal"
             required
+            InputLabelProps={{ style: { color: '#f8f8f2' } }}
           />
           
           <TextField
@@ -121,6 +115,7 @@ const SignupPage = () => {
             onChange={handleChange}
             margin="normal"
             required
+            InputLabelProps={{ style: { color: '#f8f8f2' } }}
           />
           
           <TextField
@@ -132,6 +127,7 @@ const SignupPage = () => {
             onChange={handleChange}
             margin="normal"
             required
+            InputLabelProps={{ style: { color: '#f8f8f2' } }}
           />
           
           <TextField
@@ -145,6 +141,7 @@ const SignupPage = () => {
             required
             error={errors.passwordMatch}
             helperText={errors.passwordMatch ? "Passwords do not match" : ""}
+            InputLabelProps={{ style: { color: '#f8f8f2' } }}
           />
           
           <Button
@@ -152,7 +149,6 @@ const SignupPage = () => {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
-            
           >
             Sign Up
           </Button>

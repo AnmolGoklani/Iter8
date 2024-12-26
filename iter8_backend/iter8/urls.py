@@ -24,5 +24,8 @@ urlpatterns = [
     path("groups/", views.FetchGroupList.as_view(), name="FetchGroupList"),
     path("group/members/", views.FetchGroupMembers.as_view(), name="FetchGroupMembers"),
     path("reviewee_subtask/", views.fetchRevieweeSubtask.as_view(), name="FetchRevieweeSubtask"),
+    path("user_reviewee_subtask/", views.fetchUserRevieweeSubtask.as_view(), name="FetchUserRevieweeSubtask"),
+    path("users/", views.FetchUserList.as_view(), name="FetchUserList"),
+    path("change_status/", views.changeRevieweeSubtaskStatus.as_view(), name="ChangeStatus"),
 
 ]

@@ -17,7 +17,7 @@ class FetchAssignmentListReviewee(View):
 class FetchAssignmentListReviewer(View):
     def get(self, request):
         reviewer = request.user
-        assignments = list(Assignment.objects.filter(reviewer=reviewer).values('name', 'created_at' , 'due_date'))
+        assignments = list(Assignment.objects.filter(reviewer=reviewer).values('id' ,'name', 'created_at' , 'due_date'))
         return JsonResponse(assignments, safe=False)
     
 
@@ -28,7 +28,10 @@ class AssignmentInfo(View):
         assignment_id = request.GET.get('assignment_id')
         assignment = list(Assignment.objects.filter(id=assignment_id).values())
         reviewers = list(Assignment.objects.get(id=assignment_id).reviewer.all().values('name', 'id'))
+        reviewees = list(Assignment.objects.get(id=assignment_id).reviewee.all().values('name', 'id'))
+
         assignment[0]['reviewers'] = reviewers
+        assignment[0]['reviewees'] = reviewees
         return JsonResponse(assignment, safe=False)
     
     # this only accepts form data
@@ -73,7 +76,7 @@ class AssignmentInfo(View):
             # assignment.reviewee.add(*reviewee_list)
             # assignment.reviewer.add(*reviewer_list)
             assignment.reviewer.add(request.user)
-            return JsonResponse({'message': 'Assignment created successfully'}, status=201)
+            return JsonResponse({'message': 'Assignment created successfully', 'assignment_id': assignment.id}, status=201)
         else:
             return JsonResponse(serializer.errors, status=400)
         
@@ -109,7 +112,7 @@ class Assignment_attachmentView(View):
 class SubtaskList(View):
     def get(self, request):
         assignment_id = request.GET.get('assignment_id')
-        subtasks = list(Subtask.objects.filter(assignment=assignment_id).values('name', 'id', 'due_date'))
+        subtasks = list(Subtask.objects.filter(assignment=assignment_id).values())
         return JsonResponse(subtasks, safe=False)
     
 @method_decorator(csrf_exempt, name='dispatch')
@@ -142,9 +145,16 @@ def CreateRevieweeSubtask(request, subtask):
         reviewee_subtask = Reviewee_subtask(subtask=subtask, reviewee=reviewee)
         reviewee_subtask.save()
 
-class fetchRevieweeSubtask(View):
+class fetchUserRevieweeSubtask(View):
     def get(self, request):
         reviewee = request.user
+        subtask = request.GET.get('subtask_id')
+        reviewee_subtask = list(Reviewee_subtask.objects.filter(reviewee=reviewee, subtask=subtask).values())
+        return JsonResponse(reviewee_subtask, safe=False)
+    
+class fetchRevieweeSubtask(View):
+    def get(self, request):
+        reviewee = request.GET.get('reviewee_id')
         subtask = request.GET.get('subtask_id')
         reviewee_subtask = list(Reviewee_subtask.objects.filter(reviewee=reviewee, subtask=subtask).values())
         return JsonResponse(reviewee_subtask, safe=False)
@@ -166,7 +176,9 @@ class CommentView(View):
         serializer = CommentSerializer(data=comment_data)
         if serializer.is_valid():
             comment = serializer.save()
-            comment.iteration.isReviewed = True
+            iteration = comment.iteration
+            iteration.isReviewed = True
+            iteration.save()
             return JsonResponse({'message': 'Comment added successfully'}, status=201)
         else:
             return JsonResponse(serializer.errors, status=400)
@@ -186,8 +198,8 @@ class IterationView(View):
         }
         serializer = IterationSerializer(data=iteration_data)
         if serializer.is_valid():
-            serializer.save()
-            return JsonResponse({'message': 'Iteration created successfully'}, status=201)
+            iteration = serializer.save()
+            return JsonResponse({'message': 'Iteration created successfully', 'iteration_id': iteration.id}, status=201)
         else:
             return JsonResponse(serializer.errors, status=400)
 
@@ -248,3 +260,20 @@ class FetchGroupMembers(View):
         group_id = request.GET.get('group_id')
         members = list(Group.objects.get(id=group_id).members.all().values('name', 'id'))
         return JsonResponse(members, safe=False)
+    
+class FetchUserList(View):
+    def get(self, request):
+        users = list(User.objects.all().values('name', 'id'))
+        return JsonResponse(users, safe=False)
+    
+@method_decorator(csrf_exempt, name='dispatch')
+class changeRevieweeSubtaskStatus(View):
+    def post(self, request):
+        data = request.POST
+        reviewee_subtask_id = data.get('reviewee_subtask_id')
+        status = data.get('status')
+        reviewee_subtask = Reviewee_subtask.objects.get(id=reviewee_subtask_id)
+        reviewee_subtask.isCompleted = status
+        reviewee_subtask.save()
+        return JsonResponse({'message': 'Status updated successfully'}, status=200)
+    
